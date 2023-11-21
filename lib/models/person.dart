@@ -22,6 +22,14 @@ class Person {
       this.website,
       this.image});
 
+  String fullName() {
+    return '$firstname $lastname';
+  }
+
+  String location() {
+    return 'Latitude(${address!.latitude}), Longitude(${address!.longitude})';
+  }
+
   Person.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     firstname = json['firstname'];

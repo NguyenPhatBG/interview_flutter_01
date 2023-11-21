@@ -14,6 +14,8 @@ class PersonList extends StatefulWidget {
 
 class _PostsListState extends State<PersonList> {
   final _scrollController = ScrollController();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -32,16 +34,26 @@ class _PostsListState extends State<PersonList> {
             if (state.persons.isEmpty) {
               return const Center(child: Text('No persons'));
             }
-            return ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return index >= state.persons.length
-                    ? const BottomLoader()
-                    : PersonListItem(person: state.persons[index]);
+            return RefreshIndicator(
+              key: _refreshIndicatorKey,
+              color: Colors.white,
+              backgroundColor: Colors.blue,
+              strokeWidth: 1,
+              onRefresh: () async {
+                context.read<PersonBloc>().add(PersonRefreshed());
+                return Future<void>.delayed(const Duration(seconds: 3));
               },
-              itemCount: state.hasReachedMax
-                  ? state.persons.length
-                  : state.persons.length + 1,
-              controller: _scrollController,
+              child: ListView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                  return index >= state.persons.length
+                      ? const BottomLoader()
+                      : PersonListItem(person: state.persons[index]);
+                },
+                itemCount: state.hasReachedMax
+                    ? state.persons.length
+                    : state.persons.length + 1,
+                controller: _scrollController,
+              ),
             );
           case PersonStatus.initial:
             return const Center(child: CircularProgressIndicator());

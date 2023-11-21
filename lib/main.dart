@@ -5,7 +5,7 @@ import 'package:interview_flutter/view/person_detail_screen.dart';
 import 'simple_bloc_observer.dart';
 import 'view/person_screen.dart';
 
-void main() {
+void main() async {
   Bloc.observer = const SimpleBlocObserver();
   runApp(const MyApp());
 }

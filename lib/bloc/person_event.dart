@@ -6,3 +6,5 @@ sealed class PersonEvent extends Equatable {
 }
 
 final class PersonFetched extends PersonEvent {}
+
+final class PersonRefreshed extends PersonEvent {}

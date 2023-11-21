@@ -5,7 +5,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:interview_flutter/models/person.dart';
 import 'package:stream_transform/stream_transform.dart';
-
 import 'package:http/http.dart' as http;
 
 part 'person_event.dart';
@@ -21,17 +20,26 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 }
 
 class PersonBloc extends Bloc<PersonEvent, PersonState> {
-  PersonBloc({required this.httpClient}) : super(const PersonState()) {
+  PersonBloc() : super(const PersonState()) {
     on<PersonFetched>(
       _onPersonFetched,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<PersonRefreshed>(_onPersonRefreshed);
   }
 
-  final http.Client httpClient;
+  final http.Client httpClient = http.Client();
 
-  Future<void> _onPersonFetched(
-      PersonFetched event, Emitter<PersonState> emit) async {
+  Future<void> _onPersonRefreshed(_, Emitter<PersonState> emit) async {
+    emit(state.copyWith(
+      status: PersonStatus.initial,
+      persons: [],
+      hasReachedMax: false,
+    ));
+    await _onPersonFetched(_, emit);
+  }
+
+  Future<void> _onPersonFetched(_, Emitter<PersonState> emit) async {
     if (state.hasReachedMax) return;
     try {
       if (state.status == PersonStatus.initial) {

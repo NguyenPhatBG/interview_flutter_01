@@ -1,6 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:interview_flutter/models/person.dart';
+
+import 'person_avatar.dart';
 
 class PersonListItem extends StatelessWidget {
   const PersonListItem({required this.person, super.key});
@@ -19,16 +20,10 @@ class PersonListItem extends StatelessWidget {
             vertical: 5,
           ),
           onTap: () {
-            Navigator.pushNamed(context, '/second');
+            Navigator.pushNamed(context, '/second', arguments: person);
           },
-          leading: CachedNetworkImage(
-            imageUrl: person.image!,
-            placeholder: (context, url) => const CircularProgressIndicator(
-              strokeWidth: 1,
-            ),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-          ),
-          title: Text('${person.firstname!} ${person.lastname!}'),
+          leading: PersonAvatar(imageUrl: person.image!),
+          title: Text(person.fullName()),
           subtitle: Text(person.email!),
           trailing: const Icon(Icons.arrow_forward_ios_outlined),
           dense: true,
