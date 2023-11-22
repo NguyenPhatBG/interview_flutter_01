@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-To create a new project using the barebone boilerplate:
+To clone my project from github:
 
 ```sh
 git clone https://github.com/NguyenPhatBG/interview_flutter_01.git
