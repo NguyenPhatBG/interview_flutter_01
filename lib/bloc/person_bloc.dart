@@ -10,7 +10,9 @@ import 'package:http/http.dart' as http;
 part 'person_event.dart';
 part 'person_state.dart';
 
-const _personLimit = 20;
+var numberFetch = 0;
+const startIndex = 10;
+const personLimit = 20;
 const throttleDuration = Duration(milliseconds: 100);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
@@ -31,6 +33,7 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
   final http.Client httpClient = http.Client();
 
   Future<void> _onPersonRefreshed(_, Emitter<PersonState> emit) async {
+    numberFetch = 0;
     emit(state.copyWith(
       status: PersonStatus.initial,
       persons: [],
@@ -40,17 +43,25 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
   }
 
   Future<void> _onPersonFetched(_, Emitter<PersonState> emit) async {
-    if (state.hasReachedMax) return;
+    numberFetch++;
+    if (state.hasReachedMax || numberFetch > 4) {
+      return emit(state.copyWith(hasReachedMax: true));
+    }
+
     try {
+      final personLength = state.persons.length;
       if (state.status == PersonStatus.initial) {
-        final persons = await _fetchPersons();
+        final persons = await _fetchPersons(startIndex);
         return emit(state.copyWith(
           status: PersonStatus.success,
           persons: persons,
           hasReachedMax: false,
         ));
       }
-      final persons = await _fetchPersons(state.persons.length);
+
+      final persons = await _fetchPersons(personLength == startIndex
+          ? personLength + startIndex
+          : personLength);
       emit(
         persons.isEmpty
             ? state.copyWith(hasReachedMax: true)
@@ -65,12 +76,14 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
     }
   }
 
-  Future<List<Person>> _fetchPersons([int startIndex = 0]) async {
+  Future<List<Person>> _fetchPersons([int startIndex = 10]) async {
     final response = await httpClient.get(
       Uri.https(
         'fakerapi.it',
         '/api/v1/persons',
-        <String, String>{'_quantity': '$_personLimit'},
+        <String, String>{
+          '_quantity': '${startIndex != 10 ? personLimit : startIndex}'
+        },
       ),
     );
 

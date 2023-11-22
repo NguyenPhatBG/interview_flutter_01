@@ -44,10 +44,24 @@ class _PostsListState extends State<PersonList> {
                 return Future<void>.delayed(const Duration(seconds: 3));
               },
               child: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
+                itemBuilder: (context, index) {
                   return index >= state.persons.length
                       ? const BottomLoader()
-                      : PersonListItem(person: state.persons[index]);
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PersonListItem(person: state.persons[index]),
+                            if (((index + 1) ==
+                                    (3 * personLimit + startIndex)) &&
+                                (state.persons[index].id ==
+                                    state.persons.last.id))
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                child: const Text('No more data'),
+                              )
+                          ],
+                        );
                 },
                 itemCount: state.hasReachedMax
                     ? state.persons.length
