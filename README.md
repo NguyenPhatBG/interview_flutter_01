@@ -1,16 +1,30 @@
-# interview_flutter
+# 🚀 Getting Started
 
-A new Flutter project.
+## Quick Start
 
-## Getting Started
+To create a new project using the barebone boilerplate:
 
-This project is a starting point for a Flutter application.
+```sh
+git clone https://github.com/NguyenPhatBG/interview_flutter_01.git
+```
 
-A few resources to get you started if this is your first Flutter project:
+# 🎯 Step By Step Guide
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Clean-Up & Simple Run
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Install the dependencies
+- `flutter pub get`
+- `npx pod-install`
+- `flutter run`
+
+### Install Pods (iOS Only)
+
+- `npm i`
+- `cd ios && pod install`
+- `cd .. && flutter run`
+
+### Android local.properties (Android Only)
+
+- `npm i`
+- `cd android && mkdir local.properties`
+- `nano local.properties`
